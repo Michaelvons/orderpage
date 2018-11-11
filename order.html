@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Order Admin</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- favicon -->
+    <link rel="shortcut icon" href="assets/images/favicon.ico" />
+    <!-- css -->
+    <link
+      href="assets/css/bootstrap.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link href="assets/css/icons.css" rel="stylesheet" type="text/css" />
+    <link href="assets/css/style.css" rel="stylesheet" type="text/css" />
+    <link href="assets/css/custom.css" rel="stylesheet" type="text/css" />
+    <script src="assets/js/modernizr.min.js"></script>
+
+    <link rel="stylesheet" href="views/views.css" type="text/css" />
+    <link rel="stylesheet" href="main/app.css" type="text/css" />
+  </head>
+
+  <body class="body" onresize="views.resize()">
+    <img id="busyUIElement" src="assets/img/busy.svg" class="inactive" />
+    <div id="lds-spinner" class="inactive">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+    <div><h3 id="error-msg"></h3></div>
+
+    <!-- Navigation Bar -->
+    <header id="topnav">
+      <div class="topbar-main">
+        <div class="container-fluid">
+          <!-- Logo container -->
+          <div class="logo">
+            <a href="index.html" class="logo">
+              <img
+                src="assets/images/logo-sm.png"
+                alt=""
+                height="26"
+                class="logo-small"
+              />
+              <img
+                src="assets/images/logo.png"
+                alt=""
+                height="24"
+                class="logo-large"
+              />
+            </a>
+          </div>
+          <!-- End Logo container -->
+
+          <div class="menu-extras topbar-custom">
+            <ul class="list-unstyled topbar-right-menu float-right mb-0">
+              <li class="menu-item">
+                <!-- Mobile menu toggle -->
+                <a class="navbar-toggle nav-link">
+                  <div class="lines">
+                    <span></span> <span></span> <span></span>
+                  </div>
+                </a>
+                <!-- End mobile menu toggle -->
+              </li>
+              <li class="hide-phone">
+                <form class="app-search">
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    class="form-control"
+                  />
+                  <button type="submit"><i class="fa fa-search"></i></button>
+                </form>
+              </li>
+            </ul>
+          </div>
+          <!-- end menu-extras -->
+          <div class="clearfix"></div>
+        </div>
+        <!-- end container -->
+      </div>
+      <!-- end topbar-main -->
+      <div id="navbar-custom" class="navbar-custom">
+        <div class="container-fluid">
+          <div id="navigation">
+            <!-- Navigation Menu -->
+            <ul class="navigation-menu">
+              <li class="has-submenu">
+                <a href="order.html"
+                  ><i class="mdi mdi-view-dashboard"></i>
+                  <span> All Orders </span>
+                </a>
+              </li>
+            </ul>
+            <!-- End navigation menu -->
+          </div>
+          <!-- end #navigation -->
+        </div>
+        <!-- end container -->
+      </div>
+      <!-- end navbar-custom -->
+    </header>
+    <!-- End Navigation Bar -->
+
+    <div class="wrapper">
+      <div id="UIViews" class="container-fluid">
+        <div id="loginUiView" class="wrapper-page">
+          <div class="text-center">
+            <a href="#" class="logo"><span>Vendee</span></a>
+            <h5 class="text-muted mt-0 font-600">Admin Dashboard</h5>
+          </div>
+          <div class="m-t-40 card-box">
+            <div class="text-center">
+              <h4 class="text-uppercase font-bold mb-0">Sign In</h4>
+            </div>
+            <div class="p-20">
+              <div class="form-horizontal m-t-20" action="index.html">
+                <div class="form-group">
+                  <div class="col-xs-12">
+                    <input
+                      id="staffemail"
+                      class="form-control"
+                      type="text"
+                      required=""
+                      placeholder="Email"
+                    />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="col-xs-12">
+                    <input
+                      id="staffpassword"
+                      class="form-control"
+                      type="password"
+                      required=""
+                      placeholder="Password"
+                    />
+                  </div>
+                </div>
+
+                <div class="form-group ">
+                  <div class="col-xs-12">
+                    <div class="checkbox checkbox-custom">
+                      <input id="checkbox-signup" type="checkbox" />
+                      <label for="checkbox-signup"> Remember me </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group text-center m-t-30">
+                  <div class="col-xs-12">
+                    <button
+                      onclick="project.doLogin()"
+                      class="btn btn-custom btn-bordred btn-block waves-effect waves-light"
+                      type="submit"
+                    >
+                      Log In
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="ordersUiView" class="row">
+          <div class=" col-sm-12 col-md-8 col-lg-6 mx-auto py-2">
+            <div class="card-box">
+              <table class="table">
+                <thead class="text-center">
+                  <tr>
+                    <th class="table-title h3">LIST OF ORDERS</th>
+                  </tr>
+                </thead>
+                <tbody id="orderTable" class="h4"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- - end row -->
+        <div id="orderdetailUiView" class="container">
+          <div class="col-sm-12 m-l-5" id="goback"></div>
+          <div class="row">
+            <div class=" col-sm-12 col-md-8 col-lg-8 mx-auto">
+              <div class="card-box">
+                <table class="table table-striped text-center mx-auto">
+                  <thead>
+                    <th class="table-title">Items</th>
+                    <th class="table-title">Availaible</th>
+                    <th class="table-title">UnAvailaible</th>
+                  </thead>
+                  <tbody id="orderDetailTable"></tbody>
+                </table>
+                <div class="text-center">
+                  <button
+                    onclick="order.editOrder()"
+                    class="btn btn-primary"
+                    type="submit"
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- - end row -->
+        </div>
+        <!-- end container -->
+      </div>
+      <!-- end container -->
+    </div>
+    <!-- end wrapper -->
+
+    <!--
+      Footer
+      <footer class="footer">
+        <div class="container">
+          <div class="row">
+            <div class="col-12 text-center">2018 © Admin</div>
+          </div>
+        </div>
+      </footer>
+    -->
+    <!-- End Footer -->
+
+    <!-- jQuery -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/popper.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/waves.js"></script>
+    <script src="assets/js/jquery.slimscroll.js"></script>
+
+    <!-- App js -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="assets/js/jquery.core.js"></script>
+    <script src="assets/js/jquery.app.js"></script>
+    <script src="main/project.js"></script>
+    <script src="main/order.js"></script>
+    <script src="main/orders.js"></script>
+    <script src="views/gsap/css.js"></script>
+    <script src="views/gsap/scrollto.js"></script>
+    <script src="views/gsap/easepack.js"></script>
+    <script src="views/gsap/tweenlite.js"></script>
+    <script src="views/views.js"></script>
+
+    <script src="main/app.js"></script>
+  </body>
+</html>
