@@ -23,12 +23,14 @@ var order = {
         var data = [];
         response.data.data.forEach((event, index) => {
           //console.log(event);
+          var id = event._id;
+          var parcelID = id.slice(18);
+
           list += ` <tr onClick=order.showorderDetail(this,${index}) data-id=${
             event._id
           }>
           <div class="d-flex justify-content-between">
-              <td class=""><a  class="text-dark order-text">Order <span class="badge badge-secondary">${"#0"}${index +
-            1}</span></td>
+              <td class=""><a  class="text-dark order-text">Order ${"- #"}${parcelID}</td>
           </div>
             </tr>`;
         });
@@ -49,6 +51,8 @@ var order = {
     var id = target.getAttribute("data-id");
     let orderlist = "";
     let backbutton = "";
+    // var id = event._id;
+    var parcelID = id.slice(18);
     event = {};
     for (var order of orders.list) {
       if (order._id === id) {
@@ -60,24 +64,13 @@ var order = {
     <a href="" onclick='views.depose()'
       ><i class="fa fa-1x fa-arrow-left text-dark"></i
     ></a>
-    Order <span class="badge badge-success">${"#0"}${index + 1}</span>
+    Order <span class="badge badge-success">${"- #"}${parcelID}</span>
   </h4>`;
     orders.selected.productID.map((order, index) => {
       orderlist += `
       <tr>
         <td>${order.productName}</td>
-        <td>
-            <div class="custom-control custom-radio custom-control-inline ">
-                <input type="radio"  value='PROCESSING' id="customRadioInline${index}" name="customRadio" class="custom-control-input">
-                <label class="custom-control-label" for="customRadioInline${index}">Available</label>
-            </div>
-        </td>
-        <td>
-            <div class="custom-control custom-radio custom-control-inline">
-                <input type="radio" id="customRadioInline-${index}" value="OUT_OF_STOCK" name="customRadio" class="custom-control-input">
-                <label class="custom-control-label" for="customRadioInline-${index}">Not Available</label>
-            </div>
-        </td>
+        <td>${order.quantity}</td>
     </tr>
       `;
     });
@@ -88,7 +81,7 @@ var order = {
     project.removeError();
     project.showSmallBusy();
     var editData = {
-      status: document.querySelector('input[name="customRadio"]:checked').value,
+      status: "PROCESSING",
       shopperReferenceNumber: orders.shopperReferenceNumber
     };
     /* obj = [];
@@ -98,9 +91,8 @@ var order = {
     }
     console.log(obj);
     // console.log(editData);*/
-    for (var index of orders.selected.productID) {
-      order.sendOrder(editData);
-    }
+    //console.log(editData);
+    order.sendOrder(editData);
   },
   sendOrder: function(obj) {
     axios
