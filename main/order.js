@@ -1,12 +1,22 @@
 var order = {
-  loadOrders: function() {
-    views.impose("ordersUIView", function() {
+  allPendingOrders: [],
+  selectedID: 0,
+  loadOrders: function () {
+    views.impose("ordersUIView", function () {
       order.fetchOrders();
     });
     //views.setURL("/category.html");
     //goto,impose,overlay,flash
   },
-  fetchOrders: function() {
+
+  //FILTER FOR ONLY ALL ORDERS THAT ARE  STILL PENDING
+  orderFilterDataStatus: function (data) {
+
+    return data.status === "PENDING"
+  },
+
+
+  fetchOrders: function () {
     project.showBusy();
     axios
       .get(app.API + "api/orders/all", {
@@ -14,21 +24,24 @@ var order = {
           Authorization: "Bearer " + localStorage.getItem("vendeeToken")
         }
       })
-      .then(function(response) {
-        console.log(response);
+      .then(function (response) {
+
+        var dataOrderPendingArray = response.data.data.filter(order.orderFilterDataStatus);
+
+        order.allPendingOrders = response.data.data.filter(order.orderFilterDataStatus);
+
         project.hideBusy();
         if (response.status !== 200) return app.alert(response.status);
         orders.list = response.data.data;
         var list = "";
         var data = [];
-        response.data.data.forEach((event, index) => {
-          //console.log(event);
+        dataOrderPendingArray.forEach((event, index) => {
           var id = event._id;
           var parcelID = id.slice(18);
 
           list += ` <tr onClick=order.showorderDetail(this,${index}) data-id=${
             event._id
-          }>
+            }>
           <div class="d-flex justify-content-between">
               <td class=""><a  class="text-dark order-text">Order ${"- #"}${parcelID}</td>
           </div>
@@ -37,21 +50,24 @@ var order = {
         views.element("orderTable").innerHTML = list;
       })
 
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error);
       });
   },
-  showorderDetail: function(target, index) {
-    views.impose("orderdetailUiView", function() {
+  showorderDetail: function (target, index) {
+    views.impose("orderdetailUiView", function () {
       order.orderDetails(target, index);
     });
+
+
+    order.selectedID = order.allPendingOrders[index]._id;
+
   },
-  orderDetails: function(target, index) {
+  orderDetails: function (target, index) {
     console.log(target.getAttribute("data-id"));
     var id = target.getAttribute("data-id");
     let orderlist = "";
     let backbutton = "";
-    // var id = event._id;
     var parcelID = id.slice(18);
     event = {};
     for (var order of orders.list) {
@@ -77,36 +93,31 @@ var order = {
     views.element("orderDetailTable").innerHTML = orderlist;
     views.element("goback").innerHTML = backbutton;
   },
-  editOrder: function() {
+  editOrder: function () {
     project.removeError();
     project.showSmallBusy();
     var editData = {
+      orderID: order.selectedID,
       status: "PROCESSING",
       shopperReferenceNumber: orders.shopperReferenceNumber
     };
-    /* obj = [];
-    for (var index of orders.selected.productID) {
-      console.log(editData);
-      obj.push({ editData });
-    }
-    console.log(obj);
-    // console.log(editData);*/
-    //console.log(editData);
+
     order.sendOrder(editData);
   },
-  sendOrder: function(obj) {
+  sendOrder: function (obj) {
     axios
       .put(app.API + `api/orders/status`, obj, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("vendeeToken")
         }
       })
-      .then(function(response) {
+      .then(function (response) {
         project.hideSmallBusy();
-        console.log(response);
+        order.fetchOrders();
         views.depose();
+
       })
-      .catch(function(error) {
+      .catch(function (error) {
         project.hideSmallBusy();
         project.showError(error.response.data.message);
         console.log(error);
